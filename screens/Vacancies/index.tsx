@@ -1,17 +1,30 @@
-import React, { FC, useEffect } from 'react'
-import { SafeAreaView } from 'react-native'
+import React, { FC, useEffect, useState } from 'react'
+import { FlatList, SafeAreaView, ActivityIndicator } from 'react-native'
 import { vacanyAPI } from '../../services/VacancyService'
+import VacancyCard from '../../components/VacancyCard'
 
 const Vacancies: FC = () => {
-    const { data: vacancies } = vacanyAPI.useFetchAllVacanciesQuery(15)
+    const { data: vacancies, isLoading } = vacanyAPI.useFetchAllVacanciesQuery(15)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        vacancies?.forEach((el) => {
-            console.log(el.position)
-        })
-    }, [])
+        if (!isLoading) {
+            setTimeout(() => setLoading(false), 1000)
+        }
+    }, [isLoading])
 
-    return <SafeAreaView>SIUUUUUUU</SafeAreaView>
+    return (
+        <SafeAreaView>
+            {!loading ? (
+                <FlatList
+                    data={vacancies}
+                    renderItem={(vacancy) => <VacancyCard data={vacancy.item} />}
+                />
+            ) : (
+                <ActivityIndicator size='large' />
+            )}
+        </SafeAreaView>
+    )
 }
 
 export default Vacancies
