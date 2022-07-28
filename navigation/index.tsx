@@ -2,9 +2,11 @@ import React, { FC } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Provider as ReduxProvider } from 'react-redux'
-import store from '../store'
+import makeStore from '../store'
 import Vacancies from '../screens/Vacancies'
 import Header from '../components/Header'
+
+const store = makeStore()
 
 const Navigation: FC = () => {
     const Stack = createNativeStackNavigator()

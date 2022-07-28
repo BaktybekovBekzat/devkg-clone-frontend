@@ -1,25 +1,31 @@
 import React, { FC, useEffect, useState } from 'react'
-import { FlatList, SafeAreaView, ActivityIndicator } from 'react-native'
-import { vacanyAPI } from '../../services/VacancyService'
+import { FlatList, SafeAreaView, ActivityIndicator, Text } from 'react-native'
 import VacancyCard from '../../components/VacancyCard'
+import { useTypedDispatch } from '../../hooks/useTypedDispatch'
+import { useTypedSelector } from '../../hooks/useTypedSelector'
+import { fetchVacancies } from '../../store/actions/vacancies'
 
 const Vacancies: FC = () => {
-    const { data: vacancies, isLoading } = vacanyAPI.useFetchAllVacanciesQuery(15)
-    const [loading, setLoading] = useState(true)
+    const { data: vacancies, error, loading } = useTypedSelector((state) => state.vacancies)
+    const dispatch = useTypedDispatch()
 
     useEffect(() => {
-        if (!isLoading) {
-            setTimeout(() => setLoading(false), 1000)
-        }
-    }, [isLoading])
+        dispatch(fetchVacancies())
+    }, [])
 
     return (
         <SafeAreaView>
             {!loading ? (
-                <FlatList
-                    data={vacancies}
-                    renderItem={(vacancy) => <VacancyCard data={vacancy.item} />}
-                />
+                <>
+                    {error !== '' ? (
+                        <FlatList
+                            data={vacancies}
+                            renderItem={(vacancy) => <VacancyCard data={vacancy.item} />}
+                        />
+                    ) : (
+                        <Text>{error}</Text>
+                    )}
+                </>
             ) : (
                 <ActivityIndicator size='large' />
             )}

@@ -1,17 +1,20 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { vacanyAPI } from '../services/VacancyService'
 import vacanciesReducer from './reducers/vacanciesSlice'
 
 const rootReducer = combineReducers({
     vacancies: vacanciesReducer,
-    [vacanyAPI.reducerPath]: vacanyAPI.reducer,
 })
 
-const store = configureStore({
-    reducer: rootReducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(vacanyAPI.middleware),
-})
+const makeStore = () => {
+    const store = configureStore({
+        reducer: rootReducer,
+    })
 
-export type RootState = ReturnType<typeof rootReducer>
+    return store
+}
 
-export default store
+export type AppStore = ReturnType<typeof makeStore>
+export type RootState = ReturnType<AppStore['getState']>
+export type AppDispatch = AppStore['dispatch']
+
+export default makeStore
